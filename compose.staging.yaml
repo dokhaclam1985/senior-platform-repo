@@ -1,0 +1,39 @@
+services:
+  postgres:
+    container_name: !reset null
+
+    ports: !override
+      - "127.0.0.1:${POSTGRES_PORT}:5432"
+
+  api:
+    container_name: !reset null
+
+    environment:
+      APP_ENV: staging
+
+    ports: !override
+      - "127.0.0.1:${API_PORT}:8080"
+
+  web:
+    container_name: !reset null
+
+    environment:
+      APP_ENV: staging
+
+    ports: !override
+      - "127.0.0.1:${WEB_PORT}:3000"
+
+  prometheus:
+    container_name: !reset null
+
+    ports: !override
+      - "127.0.0.1:9092:9090"
+
+  grafana:
+    container_name: !reset null
+
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+
+    ports: !override
+      - "127.0.0.1:3005:3000"
