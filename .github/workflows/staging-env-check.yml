@@ -1,0 +1,46 @@
+
+name: Staging Environment Check
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-staging:
+    name: Verify Staging Configuration
+    runs-on: ubuntu-latest
+
+    environment: staging
+
+    steps:
+      - name: Verify variable and secret
+        shell: bash
+
+        env:
+          APP_ENV: ${{ vars.APP_ENV }}
+          STAGING_DEMO_SECRET: ${{ secrets.STAGING_DEMO_SECRET }}
+
+        run: |
+          echo "Checking STAGING environment..."
+
+          if [ "$APP_ENV" != "staging" ]; then
+            echo "ERROR: APP_ENV must be staging"
+            exit 1
+          fi
+
+          echo "APP_ENV validation passed"
+
+          if [ -z "$STAGING_DEMO_SECRET" ]; then
+            echo "ERROR: STAGING_DEMO_SECRET is missing"
+            exit 1
+          fi
+
+          echo "STAGING_DEMO_SECRET is available"
+          echo "Secret value is not displayed"
+
+          echo "STAGING environment validation PASSED"
