@@ -1,5 +1,5 @@
 
-const ciTestNumber: number = "This should fail";
+const ciTestNumber: number = 123;
 
 console.log(ciTestNumber);
 
