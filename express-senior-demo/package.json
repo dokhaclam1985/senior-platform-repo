@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node dist/server.js",
     "test": "cross-env NODE_ENV=test jest",
     "migrate": "node scripts/runMigrations.js",
     "migrate:up": "node-pg-migrate up",
