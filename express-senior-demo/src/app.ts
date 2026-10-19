@@ -15,6 +15,12 @@ import { metricsMiddleware } from "./middleware/metrics";
 import { errorHandler } from "./middleware/errorHandler";
 
 const app = express();
+// Trust one reverse proxy hop in Railway production.
+// Local development does not trust forwarded headers.
+app.set(
+  'trust proxy',
+  env.nodeEnv === 'production' ? 1 : false
+);
 
 app.use(
   cors({
