@@ -13,6 +13,9 @@ permissions:
   contents: read
 
 jobs:
+  # =====================================
+  # Express API CI
+  # =====================================
   express-api:
     name: Express API - CI
     runs-on: ubuntu-latest
@@ -41,9 +44,20 @@ jobs:
       - name: Check TypeScript
         run: npx tsc --noEmit
 
+      # Build TypeScript for tests using dist/
+      - name: Build Express API
+        run: npx tsc
+
+      # Automated Jest Security Tests
+      - name: Run Automated Tests
+        run: npm test -- --runInBand
+
       - name: Security Audit
         run: npm audit --omit=dev
 
+  # =====================================
+  # Next.js Web CI
+  # =====================================
   nextjs-web:
     name: Next.js Web - CI
     runs-on: ubuntu-latest
