@@ -40,6 +40,10 @@ export async function login(
   username: string,
   password: string
 ): Promise<LoginResult | null> {
+    // Disable demo authentication in production
+  if (env.nodeEnv === 'production') {
+    return null;
+  }
   if (username !== demoUser.username) {
     return null;
   }
@@ -93,6 +97,10 @@ export async function login(
 export function refreshAccessToken(
   refreshToken: string
 ): string | null {
+    // Disable demo token refresh in production
+  if (env.nodeEnv === 'production') {
+    return null;
+  }
   try {
     if (!validRefreshTokens.has(refreshToken)) {
       return null;

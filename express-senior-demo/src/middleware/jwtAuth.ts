@@ -14,6 +14,13 @@ export function jwtAuth(
   res: Response,
   next: NextFunction
 ): void {
+    // Fail closed until production authentication is implemented
+  if (env.nodeEnv === 'production') {
+    res.status(403).json({
+      message: 'Demo authentication is disabled in production',
+    });
+    return;
+  }
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
