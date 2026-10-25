@@ -1,5 +1,10 @@
+
 import express from "express";
 import cors from "cors";
+
+// =====================================
+// 1. Application Routers
+// =====================================
 
 import usersRouter from "./routes/users";
 import authRouter from "./routes/auth";
@@ -7,28 +12,41 @@ import healthRouter from "./routes/health";
 import metricsRouter from "./routes/metrics";
 import alertsRouter from "./routes/alerts";
 
+// =====================================
+// 2. Environment Configuration
+// =====================================
+
 import env from "./config/env";
+
+// =====================================
+// 3. Middleware
+// =====================================
 
 import { requestId } from "./middleware/requestId";
 import { requestLogger } from "./middleware/logger";
 import { metricsMiddleware } from "./middleware/metrics";
 import { errorHandler } from "./middleware/errorHandler";
 
+// =====================================
+// 4. Express Application
+// =====================================
+
 const app = express();
 
 // =====================================
-// 1. Reverse Proxy Configuration
+// 5. Reverse Proxy Configuration
 // =====================================
 
 // Trust one reverse proxy hop in Railway production.
 // Local development does not trust forwarded headers.
+
 app.set(
   "trust proxy",
   env.nodeEnv === "production" ? 1 : false
 );
 
 // =====================================
-// 2. CORS Configuration
+// 6. CORS Configuration
 // =====================================
 
 app.use(
@@ -38,53 +56,78 @@ app.use(
 );
 
 // =====================================
-// 3. JSON Body Parser
+// 7. JSON Body Parser
 // =====================================
 
 app.use(express.json());
 
 // =====================================
-// 4. Request ID
+// 8. Request ID
 // =====================================
+
+// Assign a unique request ID for tracing.
 
 app.use(requestId);
 
 // =====================================
-// 5. Prometheus Endpoint
+// 9. Prometheus Endpoint
 // =====================================
+
+// Expose application metrics for Prometheus.
+// The metrics endpoint is excluded from
+// application request logging and metrics.
 
 app.use("/metrics", metricsRouter);
 
 // =====================================
-// 6. Logging + Application Metrics
+// 10. Logging + Application Metrics
 // =====================================
+
+// Log HTTP requests with requestId.
+// Record request counts and durations.
 
 app.use(requestLogger);
 app.use(metricsMiddleware);
 
 // =====================================
-// 7. Health Check
+// 11. Health Check
 // =====================================
+
+// Liveness and readiness endpoints.
 
 app.use("/health", healthRouter);
 
 // =====================================
-// 8. Application APIs
+// 12. Application APIs
 // =====================================
 
+// Authentication APIs.
+
 app.use("/api/v1/auth", authRouter);
+
+// User management APIs.
+
 app.use("/api/v1/users", usersRouter);
 
 // =====================================
-// 9. Grafana Alert Webhook
+// 13. Grafana Alert Webhook
 // =====================================
+
+// Receive Grafana alert notifications.
+// Supports firing and resolved events.
 
 app.use("/api/v1/alerts", alertsRouter);
 
 // =====================================
-// 10. Global Error Handler
+// 14. Global Error Handler
 // =====================================
 
+// Must be registered after application routes.
+
 app.use(errorHandler);
+
+// =====================================
+// 15. Export Application
+// =====================================
 
 export default app;
