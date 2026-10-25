@@ -26,11 +26,13 @@ jobs:
         working-directory: express-senior-demo
 
     steps:
+      # 1. Checkout source code
       - name: Checkout source code
         uses: actions/checkout@v7
         with:
           persist-credentials: false
 
+      # 2. Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
@@ -38,20 +40,23 @@ jobs:
           cache: npm
           cache-dependency-path: express-senior-demo/package-lock.json
 
+      # 3. Install dependencies
       - name: Install dependencies
         run: npm ci
 
+      # 4. TypeScript validation
       - name: Check TypeScript
         run: npx tsc --noEmit
 
-      # Build TypeScript for tests using dist/
+      # 5. Build JavaScript into dist/
       - name: Build Express API
         run: npx tsc
 
-      # Automated Jest Security Tests
+      # 6. Run Jest automated tests
       - name: Run Automated Tests
         run: npm test -- --runInBand
 
+      # 7. Audit production dependencies
       - name: Security Audit
         run: npm audit --omit=dev
 
@@ -68,11 +73,13 @@ jobs:
         working-directory: nextjs-senior-demo
 
     steps:
+      # 1. Checkout source code
       - name: Checkout source code
         uses: actions/checkout@v7
         with:
           persist-credentials: false
 
+      # 2. Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v7
         with:
@@ -80,14 +87,18 @@ jobs:
           cache: npm
           cache-dependency-path: nextjs-senior-demo/package-lock.json
 
+      # 3. Install dependencies
       - name: Install dependencies
         run: npm ci
 
+      # 4. TypeScript validation
       - name: Check TypeScript
         run: npx tsc --noEmit
 
+      # 5. Audit production dependencies
       - name: Security Audit
         run: npm audit --omit=dev
 
+      # 6. Next.js production build
       - name: Production Build
         run: npm run build
