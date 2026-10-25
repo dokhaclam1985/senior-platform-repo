@@ -15,12 +15,21 @@ import { metricsMiddleware } from "./middleware/metrics";
 import { errorHandler } from "./middleware/errorHandler";
 
 const app = express();
+
+// =====================================
+// 1. Reverse Proxy Configuration
+// =====================================
+
 // Trust one reverse proxy hop in Railway production.
 // Local development does not trust forwarded headers.
 app.set(
-  'trust proxy',
-  env.nodeEnv === 'production' ? 1 : false
+  "trust proxy",
+  env.nodeEnv === "production" ? 1 : false
 );
+
+// =====================================
+// 2. CORS Configuration
+// =====================================
 
 app.use(
   cors({
@@ -28,40 +37,54 @@ app.use(
   })
 );
 
+// =====================================
+// 3. JSON Body Parser
+// =====================================
+
 app.use(express.json());
+
+// =====================================
+// 4. Request ID
+// =====================================
 
 app.use(requestId);
 
-/*
- * Prometheus endpoint
- */
+// =====================================
+// 5. Prometheus Endpoint
+// =====================================
+
 app.use("/metrics", metricsRouter);
 
-/*
- * Logging + application metrics
- */
+// =====================================
+// 6. Logging + Application Metrics
+// =====================================
+
 app.use(requestLogger);
 app.use(metricsMiddleware);
 
-/*
- * Health
- */
+// =====================================
+// 7. Health Check
+// =====================================
+
 app.use("/health", healthRouter);
 
-/*
- * Application APIs
- */
+// =====================================
+// 8. Application APIs
+// =====================================
+
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", usersRouter);
 
-/*
- * Grafana alert webhook
- */
+// =====================================
+// 9. Grafana Alert Webhook
+// =====================================
+
 app.use("/api/v1/alerts", alertsRouter);
 
-/*
- * Global error handler
- */
+// =====================================
+// 10. Global Error Handler
+// =====================================
+
 app.use(errorHandler);
 
 export default app;
